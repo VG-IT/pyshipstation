@@ -5,6 +5,7 @@ import pprint
 import requests
 from shipstation.models import *
 from shipstation.constants import *
+from shipstation.retry_client import get_session
 
 
 class ShipStation(ShipStationBase):
@@ -44,7 +45,8 @@ class ShipStation(ShipStationBase):
 
     def get(self, endpoint="", payload=None):
         url = "{}{}".format(self.url, endpoint)
-        r = requests.get(
+        session = get_session()
+        r = session.get(
             url, auth=(self.key, self.secret), params=payload, timeout=self.timeout
         )
         if self.debug:
