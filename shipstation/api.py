@@ -40,8 +40,14 @@ class ShipStation(ShipStationBase):
         return self.orders
 
     def submit_orders(self):
+        sos = []
         for order in self.orders:
-            self.post(endpoint="/orders/createorder", data=json.dumps(order.as_dict()))
+            sos.append(order.as_dict())
+
+        return self.post(endpoint="/orders/createorders", data=json.dumps(sos))
+
+    def clear_orders(self):
+        self.orders = []
 
     def get(self, endpoint="", payload=None):
         url = "{}{}".format(self.url, endpoint)
