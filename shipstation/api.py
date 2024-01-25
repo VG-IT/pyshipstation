@@ -29,7 +29,7 @@ class ShipStation(ShipStationBase):
         self.key = key
         self.secret = secret
         self.orders = []
-        self.timeout = 1.0
+        self.timeout = 90.0
         self.debug = debug
 
     def add_order(self, order):
@@ -57,7 +57,8 @@ class ShipStation(ShipStationBase):
     def post(self, endpoint="", data=None):
         url = "{}{}".format(self.url, endpoint)
         headers = {"content-type": "application/json"}
-        r = requests.post(
+        session = get_session()
+        r = session.post(
             url,
             auth=(self.key, self.secret),
             data=data,
@@ -72,7 +73,8 @@ class ShipStation(ShipStationBase):
     def put(self, endpoint="", data=None):
         url = "{}{}".format(self.url, endpoint)
         headers = {"content-type": "application/json"}
-        r = requests.put(
+        session = get_session()
+        r = session.put(
             url,
             auth=(self.key, self.secret),
             data=data,

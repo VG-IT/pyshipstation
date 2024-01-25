@@ -77,7 +77,7 @@ class ShipStationCustomsItem(ShipStationBase):
         self.require_attribute("country_of_origin")
         self.require_attribute("description")
         self.require_type(value, Decimal)
-        if len(self.country_of_origin) is not 2:
+        if len(self.country_of_origin) != 2:
             raise AttributeError("country_of_origin must be two characters")
 
 
@@ -138,17 +138,17 @@ class ShipStationContainer(ShipStationBase):
         self.weight = weight
 
     def set_units(self, units):
-        self.require_membership(units)
+        self.require_membership(units, ["pounds", "ounces", "grams"])
         self.units = units
 
     def as_dict(self):
         d = super(ShipStationContainer, self).as_dict()
-        return __setattr__(d, "weight", self.weight.as_dict()) if self.weight else d
-        #
-        # if self.weight:
-        #     d["weight"] = self.weight.as_dict()
-        #
-        # return d
+        # return __setattr__(d, "weight", self.weight.as_dict()) if self.weight else d
+        
+        if self.weight:
+            d["weight"] = self.weight.as_dict()
+        
+        return d
 
 
 class ShipStationItem(ShipStationBase):
@@ -180,12 +180,12 @@ class ShipStationItem(ShipStationBase):
     def as_dict(self):
         d = super(ShipStationItem, self).as_dict()
 
-        return __setattr__(d, "weight", self.weight.as_dict()) if self.weight else d
+        # return __setattr__(d, "weight", self.weight.as_dict()) if self.weight else d
 
-        # if self.weight:
-        #     d["weight"] = self.weight.as_dict()
-        #
-        # return d
+        if self.weight:
+            d["weight"] = self.weight.as_dict()
+        
+        return d
 
 
 class ShipStationAddress(ShipStationBase):
@@ -213,6 +213,7 @@ class ShipStationAddress(ShipStationBase):
         self.postal_code = postal_code
         self.phone = phone
         self.residential = residential
+        self.country = country
 
 
 class ShipStationOrder(ShipStationBase):
@@ -243,6 +244,7 @@ class ShipStationOrder(ShipStationBase):
         self.internal_notes = None
         self.gift = None
         self.payment_method = None
+        self.requested_shipping_service = None
         self.carrier_code = None
         self.service_code = None
         self.package_code = None
@@ -331,6 +333,13 @@ class ShipStationOrder(ShipStationBase):
         d["shipTo"] = self.get_shipping_address_as_dict()
         d["weight"] = self.get_weight()
         d["internationalOptions"] = self.get_international_options_as_dict()
+        d["requestedShippingService"] = self.requested_shipping_service
+        d["carrierCode"] = self.carrier_code
+        d["serviceCode"] = self.service_code
+        d["internalNotes"] = self.internal_notes
+        d["amountPaid"] = self.amount_paid
+        d["shippingAmount"] = self.shipping_amount
+        d["taxAmount"] = self.tax_amount
 
         return d
 
@@ -373,7 +382,7 @@ class ShipStationAdvancedOptions(ShipStationBase):
         custom_field_1=None,
         custom_field_2=None,
         custom_field_3=None,
-        soure=None,
+        source=None,
         merged_or_split=None,
         merged_ids=None,
         bill_to_party=None,
