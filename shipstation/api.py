@@ -122,3 +122,66 @@ class ShipStation(ShipStationBase):
         }
 
         return self.get(endpoint="/orders/list", payload=valid_parameters)
+
+    def fetch_shipments(self, parameters={}):
+        """
+            Query, fetch, and return existing shipments from ShipStation
+
+            Args:
+                parameters (dict): Dict of filters to filter by.
+
+            Raises:
+                AttributeError: parameters not of type dict
+                AttributeError: invalid key in parameters dict.
+
+            Returns:
+                A <Response [code]> object.
+
+            Examples:
+                >>> ss.fetch_shipments(parameters={'order_number': '', 'page': '2'})
+        """
+        self.require_type(parameters, dict)
+        invalid_keys = set(parameters.keys()).difference(SHIPMENT_LIST_PARAMETERS)
+
+        if invalid_keys:
+            raise AttributeError(
+                "Invalid order list parameters: {}".format(", ".join(invalid_keys))
+            )
+
+        valid_parameters = {
+            self.to_camel_case(key): value for key, value in parameters.items()
+        }
+
+        return self.get(endpoint="/shipments", payload=valid_parameters)
+
+    def fetch_fulfillments(self, parameters={}):
+        """
+            Query, fetch, and return existing fulfillments from ShipStation
+
+            Args:
+                parameters (dict): Dict of filters to filter by.
+
+            Raises:
+                AttributeError: parameters not of type dict
+                AttributeError: invalid key in parameters dict.
+
+            Returns:
+                A <Response [code]> object.
+
+            Examples:
+                >>> ss.fetch_fulfillments(parameters={'order_number': '', 'page': '2'})
+        """
+        self.require_type(parameters, dict)
+        invalid_keys = set(parameters.keys()).difference(FULFILLMENT_LIST_PARAMETERS)
+
+        if invalid_keys:
+            raise AttributeError(
+                "Invalid order list parameters: {}".format(", ".join(invalid_keys))
+            )
+
+        valid_parameters = {
+            self.to_camel_case(key): value for key, value in parameters.items()
+        }
+
+        return self.get(endpoint="/fulfillments", payload=valid_parameters)
+
