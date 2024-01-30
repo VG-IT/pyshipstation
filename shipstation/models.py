@@ -346,6 +346,8 @@ class ShipStationOrder(ShipStationBase):
         d["amountPaid"] = self.amount_paid
         d["shippingAmount"] = self.shipping_amount
         d["taxAmount"] = self.tax_amount
+        if self.advanced_options:
+            d["advancedOptions"] = self.advanced_options.as_dict()
 
         return d
 
@@ -413,6 +415,15 @@ class ShipStationAdvancedOptions(ShipStationBase):
         self.bill_to_postal_code = bill_to_postal_code
         self.bill_to_country_code = bill_to_country_code
         self.bill_to_my_other_account = bill_to_my_other_account
+
+    def as_dict(self):
+        d = super(ShipStationAdvancedOptions, self).as_dict()
+        res = dict()
+        for k in d.keys():
+            if d[k]:
+                res[k] = d[k]
+
+        return res
 
 
 class ShipStationInsuranceOptions(ShipStationBase):
